@@ -37,7 +37,7 @@ def fetch_song_features_from_gemini(song_name):
     Uses Gemini to estimate audio features for a song not in the dataset.
     Returns a dictionary of features or None if failed.
     """
-    model = genai.GenerativeModel('gemini-3-flash-preview')
+    model = genai.GenerativeModel('gemini-flash-latest')
     
     prompt = f"""
     Estimate the audio features for the song "{song_name}" as accurately as possible based on Spotify's audio features.
@@ -122,7 +122,7 @@ X_norm = X_scaled / np.linalg.norm(X_scaled, axis=1, keepdims=True)
 def get_gemini_recommendations(song_name, n_recommendations=5):
     """
     """
-    model = genai.GenerativeModel('gemini-3-flash-preview')
+    model = genai.GenerativeModel('gemini-flash-latest')
     
     prompt = f"""
     Act as a professional music curator.
