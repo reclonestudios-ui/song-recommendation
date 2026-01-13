@@ -15,12 +15,6 @@ Original file is located at
 
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.preprocessing import StandardScaler
-from sklearn.decomposition import PCA
-from sklearn.cluster import KMeans
-from sklearn.metrics.pairwise import cosine_similarity
 import google.generativeai as genai
 import json
 import time
@@ -37,7 +31,7 @@ def fetch_song_features_from_gemini(song_name):
     Uses Gemini to estimate audio features for a song not in the dataset.
     Returns a dictionary of features or None if failed.
     """
-    model = genai.GenerativeModel('gemini-3-flash-preview')
+    model = genai.GenerativeModel('gemini-flash-lite-latest')
     
     prompt = f"""
     Estimate the audio features for the song "{song_name}" as accurately as possible based on Spotify's audio features.
@@ -82,39 +76,12 @@ CSV_HEADER = df.columns.tolist()
 # Drop missing track names/artists
 df = df.dropna(subset=["track_name", "track_artist"])
 
-# Numerical features for clustering
+# Numerical features (kept for reference or future use)
 features = ["danceability", "energy", "loudness", "speechiness", "acousticness",
             "instrumentalness", "liveness", "valence", "tempo", "duration_ms"]
 
-X = df[features]
-
-# Standardize
-scaler = StandardScaler()
-X_scaled = scaler.fit_transform(X)
-
-#------ Clustering KMean -----------
-inertia = []
-K = range(2, 11)
-for k in K:
-    kmeans = KMeans(n_clusters=k, random_state=42)
-    kmeans.fit(X_scaled)
-    inertia.append(kmeans.inertia_)
-
-# Fit final KMeans (example k=6)
-kmeans = KMeans(n_clusters=6, random_state=42)
-df["Cluster"] = kmeans.fit_predict(X_scaled)
-
-#-------- Removing Duplicates -------
-
+# Remove duplicates based on track_name to keep the dataset clean for searching
 df = df.drop_duplicates(subset=["track_name"]).reset_index(drop=True)
-
-# Recompute scaled features & cosine similarity
-X = df[features]
-X_scaled = scaler.fit_transform(X)
-#cos_sim = cosine_similarity(X_scaled)
-
-from sklearn.metrics.pairwise import cosine_similarity
-X_norm = X_scaled / np.linalg.norm(X_scaled, axis=1, keepdims=True)
 
 #--------- Recommendation System Function ----------
 
@@ -122,7 +89,7 @@ X_norm = X_scaled / np.linalg.norm(X_scaled, axis=1, keepdims=True)
 def get_gemini_recommendations(song_name, n_recommendations=5):
     """
     """
-    model = genai.GenerativeModel('gemini-3-flash-preview')
+    model = genai.GenerativeModel('gemini-flash-lite-latest')
     
     prompt = f"""
     Act as a professional music curator.

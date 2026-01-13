@@ -34,13 +34,22 @@ const Home = () => {
         setSearchedSong(songName);
         setRecommendations([]);
 
+        console.log(`[DEBUG] Initiating search for: "${songName}" with count: ${numRecs}`);
+
         try {
             const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+            console.log(`[DEBUG] API URL: ${apiUrl}`);
+
             const response = await axios.post(`${apiUrl}/api/recommend`, {
                 song_name: songName,
                 n_recommendations: numRecs
             });
             console.log("API Response:", response.data);
+
+            if (!response.data || response.data.length === 0) {
+                console.warn("[DEBUG] API returned empty recommendations array.");
+            }
+
             setRecommendations(response.data);
 
             // Scroll to results after short delay to allow render
@@ -49,7 +58,20 @@ const Home = () => {
             }, 100);
 
         } catch (err) {
-            console.error(err);
+            console.error("[DEBUG] Error fetching recommendations:", err);
+            if (err.response) {
+                // The request was made and the server responded with a status code
+                // that falls out of the range of 2xx
+                console.error("[DEBUG] Server Error Data:", err.response.data);
+                console.error("[DEBUG] Server Error Status:", err.response.status);
+                console.error("[DEBUG] Server Error Headers:", err.response.headers);
+            } else if (err.request) {
+                // The request was made but no response was received
+                console.error("[DEBUG] Network Error: No response received. Request details:", err.request);
+            } else {
+                // Something happened in setting up the request that triggered an Error
+                console.error("[DEBUG] Request Setup Error:", err.message);
+            }
             setError('Failed to fetch recommendations. Please try again.');
         } finally {
             setIsLoading(false);

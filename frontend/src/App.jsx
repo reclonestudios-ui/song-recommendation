@@ -9,7 +9,7 @@ const AppContent = () => {
 
   const handleGlobalSearch = (query) => {
     // Navigate home if searched (simple spa behavior) or just log
-    console.log("Global search:", query);
+    console.log(`[DEBUG] Global search triggered with query: "${query}"`);
     navigate('/');
   };
 
