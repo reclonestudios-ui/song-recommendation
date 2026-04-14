@@ -22,7 +22,7 @@ import time
 import os
 # REPLACE WITH YOUR ACTUAL KEY IF RUNNING LOCALLY WITHOUT ENV VAR
 # BUT ON RENDER/PROD, SET "GEMINI_API_KEY" IN ENVIRONMENT VARIABLES
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "AIzaSyC1typQr_vFhO6Cwo0aKklyAhSig5VspnU")
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "AIzaSyAjDaDe_DM4q2ygrmO8DXxG7I-ywOUnfM4")
 genai.configure(api_key=GEMINI_API_KEY)
 
 def fetch_song_features_from_gemini(song_name):
